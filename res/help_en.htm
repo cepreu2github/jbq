@@ -1,0 +1,21 @@
+<HTML>
+<HEAD>
+	<TITLE> Справка </TITLE>
+</HEAD>
+
+<BODY>
+
+<H1> Help system of program jBQ </H1>
+<H2> Contents </H2>
+<A HREF="#n1"> Introduction </A> <BR>
+<A HREF="#n2"> Adding modules </A> <BR>
+<H2> <A NAME="n1" HREF="#n1"> Introduction </A> </H2>
+jBQ is program for reading bible texts, using format of program BibleQuote. It supports following types of modules: bible texts, commentaries, books, dictionaries. 
+<H2> <A NAME="n2" HREF="#n2"> Adding modules </A> </H2>
+Program jBQ support 2 methods of adding modules: adding inside JAR-file, adding at memory storage card of device.
+<H3> First way - adding inside JAR-file </H3>
+Installation package of progarm jBQ_[version_number].jar represent ZIP-archive, which can be opened in any archiver, supporting this format. In order to add module you must copy folder with module from your BibleQuote installation folder in folder "modules" inside JAR-file with aid of your preferable archiver. Also, in order that jBQ can "see" this module, it is necessary to write him at file "modules/list.txt". At this file every line represent is path to file bibleqt.ini of module relatively "modules" folder inside JAR-file. Attention: all file names in folder "modules" must be in low case. For dictionary modules sequence the same except in list.txt you must write path to .idx-file of dictionary.
+<H3> Adding at memory storage card of device </H3>
+In order to add module at memory storage card of device just copy folder with module (it is folder, which contain bibleqt.ini) at folder at memory storage card, specified in settings as place for modules storage (by default "bqmodules"). Dictionary module necessary to copy at subfolder Dictionaries of this folder. So as result this folder must contain .htm and .idx-files of dictionary.
+</BODY>
+</HTML>
