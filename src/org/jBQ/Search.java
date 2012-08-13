@@ -24,7 +24,7 @@ package org.jBQ;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.Label;
-import com.sun.lwuit.TextArea;
+import com.sun.lwuit.TextAreaPatch;
 import com.sun.lwuit.Dialog;
 import com.sun.lwuit.CheckBox;
 import com.sun.lwuit.ComboBox;
@@ -37,7 +37,7 @@ public class Search extends BaseDialog {
     private Command searchCommand;
     private CheckBox isCaseSensitiveCheckbox;
     private Label whatFindLabel;
-    private TextArea keywordsField;
+    private TextAreaPatch keywordsField;
     private Label fromLabel;
     private ComboBox fromComboBox;
     private Label toLabel;
@@ -48,7 +48,7 @@ public class Search extends BaseDialog {
         form.addCommandListener(this);
         //controls
         whatFindLabel = createLabel("whatFind");
-        keywordsField = new TextArea("");
+        keywordsField = new TextAreaPatch("");
         form.addComponent(keywordsField);
         isCaseSensitiveCheckbox = new CheckBox("isCaseSensitiveSearch");
         isCaseSensitiveCheckbox.setSelected(true);

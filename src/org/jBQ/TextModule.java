@@ -324,10 +324,13 @@ public class TextModule extends Module {
                                 dictionaryName = hebrewStrongsDictionary;
                             else if (testament == Testaments.NEW)
                                 dictionaryName = greekStrongsDictionary;
-                            if (dictionaryName != null && Modules.getByName(dictionaryName) != null)
+                            if (dictionaryName != null && Modules.getByName(dictionaryName) != null) {
+                                String number = parts[j].trim();
+                                while (number.length() < 5)
+                                    number = "0" + number;
                                 //create hyperlink
-                                verses[i] += "<a href=\"jBQ:///" + dictionaryName + "/" + parts[j].trim() + "/1\">" + parts[j] + "</a>";
-                            else
+                                verses[i] += "<a href=\"jBQ:///" + dictionaryName + "/" + number + "/1" + TextModule.anchorPrefix + "1\">" + parts[j] + "</a>";
+                            } else
                                 verses[i] += parts[j];
                         }
                     } catch (Throwable exception) {
@@ -348,7 +351,7 @@ public class TextModule extends Module {
     }
 
     private boolean readINISettings(String PathToINI) {
-        //open stream for INI file
+		//open stream for INI file
         InputStream INIStream = null;
         try {
             INIStream = Util.getResourceAsStream(PathToINI);
@@ -360,7 +363,7 @@ public class TextModule extends Module {
         //parse general settings
         String line = Util.readLine(INIStreamEncoded);
         while (line != null) {
-            if (line.startsWith("BibleName"))
+			if (line.startsWith("BibleName"))
                 fullName = Util.splitString(line, "=", 2)[1].trim();
             if (line.startsWith("BibleShortName"))
                 shortName = Util.splitString(line, "=", 2)[1].trim();
@@ -407,7 +410,7 @@ public class TextModule extends Module {
             line = Util.readLine(INIStreamEncoded);
         }
         return true;
-    }
+}
 
     private class Book {
 

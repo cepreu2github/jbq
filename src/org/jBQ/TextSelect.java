@@ -39,7 +39,7 @@ public class TextSelect extends BaseDialog {
         super(Settings.tr("selectPassage"));
         form.setLayout(new FlowLayout());
         //add commands
-        cancelCommand = super.createCommand("сancel");
+        cancelCommand = super.createCommand("cancel");
         form.addCommandListener(this);
     }
 

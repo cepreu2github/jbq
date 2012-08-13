@@ -35,7 +35,7 @@ public class jBQDocumentRequestHandler extends DefaultDocumentRequestHandler {
     }
 
     public void resourceRequestedAsync(DocumentInfo docInfo, final IOCallback callback) {
-        docInfo.setEncoding("utf8");
+        docInfo.setEncoding("UTF-8");
         String url = docInfo.getUrl();
         //if url contains anchors, trim they
         int hash = url.indexOf('#');
@@ -67,6 +67,7 @@ public class jBQDocumentRequestHandler extends DefaultDocumentRequestHandler {
             return;
             //ByteArrayInputStream can throw encoding exception, but we always know, that our encoding is UTF-8, so catch does nothing
         } catch (Throwable exception) {
+			System.out.println("Exception");
         }
         return;
     }

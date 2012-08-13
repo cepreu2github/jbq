@@ -35,7 +35,7 @@ public class History extends BaseDialog {
     private static final int maxSize = 20;
 
     private History() {
-        super("History");
+        super("history");
         history = new Vector();
         //reading history from RMS or INI
         for (int i = 0; i < maxSize; i++) {

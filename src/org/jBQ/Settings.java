@@ -24,7 +24,7 @@ package org.jBQ;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.CheckBox;
-import com.sun.lwuit.TextArea;
+import com.sun.lwuit.TextAreaPatch;
 import com.sun.lwuit.Label;
 import com.sun.lwuit.util.Resources;
 import com.sun.lwuit.ComboBox;
@@ -44,7 +44,7 @@ public class Settings extends BaseDialog {
     private CheckBox newLineAfterVerseCheck;
     private CheckBox strongsEnabledCheck;
     private Label modulesPathLabel;
-    private TextArea modulesPathField;
+    private TextAreaPatch modulesPathField;
     private Label languageLabel;
     private ComboBox localesComboBox;
     private Hashtable currentLocale;
@@ -86,7 +86,7 @@ public class Settings extends BaseDialog {
         newLineAfterVerseCheck = createCheckBox("newLineAfterVerse");
         strongsEnabledCheck = createCheckBox("strongsEnabled");
         modulesPathLabel = createLabel("modulesPath");
-        modulesPathField = new TextArea("");
+        modulesPathField = new TextAreaPatch("");
         form.addComponent(modulesPathField);
         languageLabel = createLabel("language");
         localesComboBox = createComboBox();

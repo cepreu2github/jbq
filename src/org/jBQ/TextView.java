@@ -100,7 +100,7 @@ public class TextView extends BaseDialog {
         instance().form.setTitle("searchResults");
         //set text to search results
         TextModule module = (TextModule) Modules.getByName(instance().currentReference.getModule());
-        instance().HTMLView.setBodyText(module.search(text, isCaseSensitive, from, to));
+        instance().HTMLView.setBodyText(module.search(text, isCaseSensitive, from, to), "UTF-8");
         //set possibility to go at next chapter and use search
         instance().form.addCommand(instance().searchCommand);
         instance().form.removeCommand(instance().nextChapterCommand);

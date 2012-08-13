@@ -40,8 +40,11 @@ public class Util {
         if (InFileName.startsWith("jar://"))
             return InFileName.toLowerCase();
         else {
-            if (FileSystemStorage.getInstance().exists(InFileName))
-                return InFileName;
+			try {
+				if (FileSystemStorage.getInstance().exists(InFileName))
+					return InFileName;
+			} catch (Throwable ex) {
+            }
             //find actual file name
             String Directory = InFileName.substring(0, InFileName.lastIndexOf(FSSEP));
             String FileNameInLowCase = InFileName.substring(InFileName.lastIndexOf(FSSEP) + 1, InFileName.length()).toLowerCase();
@@ -191,6 +194,10 @@ public class Util {
         return result.toString();
     }
 
+	public static void show(String message) {
+		Dialog.show("Info", message, "OK", null);
+	}
+	
     public static Util instance() {
         return instance;
     }

@@ -37,8 +37,8 @@ public class jBQ extends MIDlet {
     }
 
     public void startApp() {
-        Display.init(this);
         Display.getInstance().setDefaultVirtualKeyboard(null);
+        Display.init(this);
         //load theme
         try {
             //set the theme
@@ -64,6 +64,7 @@ public class jBQ extends MIDlet {
             try {
                 firstModuleName = (String) Modules.names(Module.Types.BIBLE).firstElement();
             } catch (Throwable exception) {
+				Util.showException(exception);
             }
             if (firstModuleName != null) {
                 Module firstModule = Modules.getByName(firstModuleName);
