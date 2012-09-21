@@ -37,9 +37,9 @@ public class TextView extends BaseDialog {
     private Command moduleCommand;
     private Command historyCommand;
     private Command aboutCommand;
-    private Command nextChapterCommand;
     private Command settingsCommand;
     private Command searchCommand;
+    private Command backCommand;
     private Reference currentReference = null;
 
     private TextView() {
@@ -50,6 +50,7 @@ public class TextView extends BaseDialog {
         HTMLView.setHTMLCallback(new jBQHTMLCallback());
         form.addComponent(HTMLView);
         //add commands
+        backCommand = super.createCommand("back");
         gotoCommand = super.createCommand("goto");
         exitCommand = super.createCommand("exit");
         helpCommand = super.createCommand("help");
@@ -58,7 +59,6 @@ public class TextView extends BaseDialog {
         aboutCommand = super.createCommand("about");
         settingsCommand = super.createCommand("settings");
         searchCommand = super.createCommand("search");
-        nextChapterCommand = new Command("nextChapter");
         form.addCommandListener(this);
         form.addKeyListener(Platform.keyPageDownCode, this);
         form.addKeyListener(Platform.keyPageUpCode, this);
@@ -79,18 +79,12 @@ public class TextView extends BaseDialog {
         String textURL = Modules.getByName(ref.getModule()).entryFileName(ref.getEntry());
         instance().HTMLView.setPage(textURL + TextModule.anchorPrefix + Integer.toString(ref.getVerse()));
         jBQDocumentRequestHandler.setReference(null);
-        //determine possibility to go at next chapter and use search
+        //determine possibility to use search
         Module module = Modules.getByName(ref.getModule());
-        TextModule textModule = null;
-        if (module.getType() != Module.Types.DICTIONARY){
-            textModule = (TextModule) module;
+        if (module.getType() != Module.Types.DICTIONARY)
             instance().form.addCommand(instance().searchCommand);
-        } else
-            instance().form.removeCommand(instance().searchCommand);
-        if (textModule != null && textModule.chaptersCountInBook(ref.getEntry()) + (textModule.getFirstChapterNumber() - 1) > ref.getChapter())
-            instance().form.addCommand(instance().nextChapterCommand);
         else
-            instance().form.removeCommand(instance().nextChapterCommand);
+            instance().form.removeCommand(instance().searchCommand);
         //show form
         instance().form.show();
     }
@@ -101,9 +95,8 @@ public class TextView extends BaseDialog {
         //set text to search results
         TextModule module = (TextModule) Modules.getByName(instance().currentReference.getModule());
         instance().HTMLView.setBodyText(module.search(text, isCaseSensitive, from, to), "UTF-8");
-        //set possibility to go at next chapter and use search
+        //set possibility to use search
         instance().form.addCommand(instance().searchCommand);
-        instance().form.removeCommand(instance().nextChapterCommand);
         //show form
         instance().form.show();
     }
@@ -137,39 +130,35 @@ public class TextView extends BaseDialog {
     }
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getKeyEvent() == Platform.keyPageDownCode) {
+        if (event.getKeyEvent() == Platform.keyPageDownCode)
             HTMLView.scrollPages(1, true);
-            return;
-        }
-        if (event.getKeyEvent() == Platform.keyPageUpCode) {
+        else if (event.getKeyEvent() == Platform.keyPageUpCode)
             HTMLView.scrollPages(-1, true);
-            return;
-        }
-        if (event.getCommand() == exitCommand) {
-            History.save();
-            Display.getInstance().exitApplication();
-        }
-        if (event.getCommand() == helpCommand)
-            showHelp();
-        if (event.getCommand() == gotoCommand) {
+        else if (event.getCommand() == backCommand) {
+            if (History.size() >= 2)
+                show(History.elementAt(History.size() - 2));
+        } else if (event.getCommand() == gotoCommand) {
             Module currentModule = Modules.getByName(currentReference.getModule());
             if (currentModule.getType() != Module.Types.DICTIONARY)
                 TextSelect.show(currentReference);
             else
                 DictionaryView.show((DictionaryModule) currentModule);
-        }
-        if (event.getCommand() == moduleCommand)
+        } else if (event.getCommand() == moduleCommand)
             ModuleChoose.show(currentReference);
-        if (event.getCommand() == historyCommand)
+        else if (event.getCommand() == historyCommand)
             History.show();
-        if (event.getCommand() == nextChapterCommand)
-            show(new Reference(currentReference.getModule(), currentReference.getEntry(), currentReference.getChapter() + 1, 1));
-        if (event.getCommand() == aboutCommand)
-            showAbout();
-        if (event.getCommand() == settingsCommand)
+        else if (event.getCommand() == settingsCommand)
             Settings.show(currentReference);
-        if (event.getCommand() == searchCommand)
+        else if (event.getCommand() == searchCommand)
             Search.show((TextModule) Modules.getByName(currentReference.getModule()));
+        else if (event.getCommand() == helpCommand)
+            showHelp();
+        else if (event.getCommand() == aboutCommand)
+            showAbout();
+        else if (event.getCommand() == exitCommand) {
+            History.save();
+            Display.getInstance().exitApplication();
+        }
     }
 
     private static TextView instance() {

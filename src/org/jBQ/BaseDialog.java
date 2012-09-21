@@ -40,6 +40,7 @@ public abstract class BaseDialog implements ActionListener {
         form.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
     }
 
+    //below some methods to quickly create standard GUI components and place them at form
     protected Command createCommand(String name) {
         Command command = new Command(name);
         form.addCommand(command);

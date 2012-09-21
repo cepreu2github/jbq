@@ -25,16 +25,36 @@ import java.io.InputStream;
 import org.albite.io.decoders.AlbiteStreamReader;
 import java.util.Vector;
 import java.util.Hashtable;
+import com.sun.lwuit.Dialog;
+
+// module, which represents Dictionary
 
 public class DictionaryModule extends Module {
 
-    private int prefixLength = 0;
+    private int prefixLength = 0; //we use Hashtable, containing lists, where prefix of words used as a key for such words.
+                                  //Size of prefix determinig by number of words in dictionary, which we know, so here we
+                                  //replace Trie with more simple structure
     private Hashtable dictionary;
     private String articleFileName;
     private AlbiteStreamReader idxStreamEncoded;
+    private String pathToIDX;
 
     public DictionaryModule(String pathToIDX) {
+        //show message at LoadingScreen
+        LoadingScreen.print(Settings.tr("loadModule"));
+        LoadingScreen.print(pathToIDX);        
         type = Types.DICTIONARY;
+        this.pathToIDX = pathToIDX;
+        //shortName is name of file
+        name = pathToIDX.substring(pathToIDX.lastIndexOf(FSSEP) + 1, pathToIDX.length() - 4).toLowerCase();
+        shortName = name;
+        articleFileName = Util.GetFileNameInProperCase(pathToIDX.substring(0, pathToIDX.length() - 4) + ".htm");
+        reload();
+    }
+    
+    public void reload() {
+        dictionary = null;
+        encoding = Settings.getDictionariesEncoding();
         //open stream for .idx file
         InputStream idxStream = null;
         try {
@@ -43,10 +63,6 @@ public class DictionaryModule extends Module {
             Util.showException(exception);
         }
         idxStreamEncoded = new AlbiteStreamReader(idxStream, encoding);
-        //shortName is name of file
-        name = pathToIDX.substring(pathToIDX.lastIndexOf(FSSEP) + 1, pathToIDX.length() - 4).toLowerCase();
-        shortName = name;
-        articleFileName = Util.GetFileNameInProperCase(pathToIDX.substring(0, pathToIDX.length() - 4) + ".htm");
         //read name from idx
         fullName = Util.readLine(idxStreamEncoded);
     }
@@ -70,10 +86,18 @@ public class DictionaryModule extends Module {
         }
         //create dictionary index in memory
         dictionary = new Hashtable();
-        for (int i = 0; i < lines.size() - 2; i += 2)
-            placeWord((String) lines.elementAt(i), (String) lines.elementAt(i + 1), (String) lines.elementAt(i + 3));
+        for (int i = 0; i < lines.size() - 2; i += 2) {
+            try {
+                placeWord((String) lines.elementAt(i), (String) lines.elementAt(i + 1), (String) lines.elementAt(i + 3));
+            } catch (Throwable exception) {
+                Dialog.show("Error", "Can't read dictionary. Possibly due to incorrect dictionary encoding settigns.", "OK", null);
+                break;
+            }
+        }
     }
 
+    //place information about word in index, so we can quickly find by word prefix all words which use this prefix
+    //and by word, where in ArticleFile located article for this word
     private void placeWord(String word, String beginOffsetString, String endOffsetString) {
         word = Util.toLowerCase(word); //case insensitive dictionary
         Record record = new Record(word, Integer.parseInt(beginOffsetString.trim()), Integer.parseInt(endOffsetString.trim()));
@@ -90,6 +114,7 @@ public class DictionaryModule extends Module {
         }
     }
 
+    //get words with this prefix from Hashtable
     private Vector getPrefixWords(String word) {
         String prefix = word;
         if (word.length() > prefixLength)
@@ -146,6 +171,8 @@ public class DictionaryModule extends Module {
         return articleFileName;
     }
 
+    //get words, which begins with this prefix, also makes text comparsion, because user can type more text, than our
+    //prefix length in index storing structure
     public Vector getPossibilities(String word) {
         if (dictionary == null)
             readIndex();
@@ -162,6 +189,7 @@ public class DictionaryModule extends Module {
         return returnValue;
     }
 
+    //used for represent one word in index of all dictionary words
     private class Record {
 
         public int beginOffset;

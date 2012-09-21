@@ -52,6 +52,7 @@ public class History extends BaseDialog {
         form.addCommandListener(this);
     }
 
+    //save history to persistent storage (RMS for example)
     public static void save() {
         for (int i = 0; i < instance().history.size(); i++)
             Platform.addSettingsKey("History", "Record" + Integer.toString(i), ((Reference) instance().history.elementAt(i)).toString());
@@ -67,6 +68,10 @@ public class History extends BaseDialog {
         return (Reference) instance().history.lastElement();
     }
 
+    public static Reference elementAt(int index) {
+        return (Reference) instance().history.elementAt(index);
+    }
+
     public static Reference lastNonDictionaryElement() {
         for (int i = instance().history.size() - 1; i > -1; i--) {
             Reference element = (Reference) instance().history.elementAt(i);
@@ -75,11 +80,21 @@ public class History extends BaseDialog {
         }
         return null;
     }
-
+    
+    public static Reference lastBibleElement() {
+        for (int i = instance().history.size() - 1; i > -1; i--) {
+            Reference element = (Reference) instance().history.elementAt(i);
+            if (Modules.getByName(element.getModule()).getType() == Module.Types.BIBLE)
+                return element;
+        }
+        return null;
+    }
+    
     public static int size() {
         return instance().history.size();
     }
 
+    //show interface to choose reference from dictionary and go at it
     public static void show() {
         instance().form.removeAll();
         for (int i = instance().history.size() - 1; i > -1; i--) {

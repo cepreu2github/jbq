@@ -19,6 +19,8 @@
  *
  */
 
+// ported from GNU Classpath to support some unicode operations
+
 package java13.lang;
 
 public final class Character {

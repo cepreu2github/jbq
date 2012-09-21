@@ -31,6 +31,7 @@ import com.sun.lwuit.ComboBox;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
+import org.albite.io.decoders.Encodings;
 
 //class for keeping settings and responsible for translation service
 public class Settings extends BaseDialog {
@@ -43,6 +44,8 @@ public class Settings extends BaseDialog {
     private Command saveCommand;
     private CheckBox newLineAfterVerseCheck;
     private CheckBox strongsEnabledCheck;
+    private Label dictionariesEncodingLabel;
+    private ComboBox dictionariesEncodingComboBox;
     private Label modulesPathLabel;
     private TextAreaPatch modulesPathField;
     private Label languageLabel;
@@ -50,6 +53,8 @@ public class Settings extends BaseDialog {
     private Hashtable currentLocale;
     private String currentLocaleName;
     private Vector availableLocales;
+    private String defaultBibleName; // fixme
+    private String dictionariesEncoding;
     private Resources languagesResource = null;
     private boolean isControlsCreated = false;
 
@@ -76,6 +81,9 @@ public class Settings extends BaseDialog {
         modulesPath = Platform.getSettingsKey("Settings", "modulesPath");
         if (modulesPath == null)
             modulesPath = "bqmodules";
+        dictionariesEncoding = Platform.getSettingsKey("Settings", "dictionariesEncoding");
+        if (dictionariesEncoding == null)
+            dictionariesEncoding = "windows-1251";
         isNewLineAfterVerse = getBooleanFromSettings("isNewLineAfterVerse");
         isStrongsEnabled = getBooleanFromSettings("isStrongsEnabled");
     }
@@ -85,11 +93,17 @@ public class Settings extends BaseDialog {
         //controls
         newLineAfterVerseCheck = createCheckBox("newLineAfterVerse");
         strongsEnabledCheck = createCheckBox("strongsEnabled");
+        dictionariesEncodingLabel = createLabel("dictionariesEncoding");
+        dictionariesEncodingComboBox = createComboBox();
         modulesPathLabel = createLabel("modulesPath");
         modulesPathField = new TextAreaPatch("");
         form.addComponent(modulesPathField);
         languageLabel = createLabel("language");
         localesComboBox = createComboBox();
+        //add available encodings to dictionariesEncodingComboBox
+        for (int i = 0; i < Encodings.ENCODINGS.length; i++)
+            dictionariesEncodingComboBox.addItem(Encodings.ENCODINGS[i]);
+        //add available languages to localesComboBox
         for (int i = 0; i < availableLocales.size(); i++) {
             String locale = (String) availableLocales.elementAt(i);
             localesComboBox.addItem(languagesResource.getL10N("Lang", locale).get("languageName"));
@@ -146,9 +160,14 @@ public class Settings extends BaseDialog {
         instance().newLineAfterVerseCheck.setSelected(instance().isNewLineAfterVerse);
         instance().strongsEnabledCheck.setSelected(instance().isStrongsEnabled);
         instance().modulesPathField.setText(instance().modulesPath);
+        //fill locales list
         for (int i = 0; i < instance().availableLocales.size(); i++)
             if (((String) instance().availableLocales.elementAt(i)).equals(instance().currentLocaleName))
                 instance().localesComboBox.setSelectedIndex(i);
+        //fill encodings list
+        for (int i = 0; i < Encodings.ENCODINGS.length; i++)
+            if (Encodings.ENCODINGS[i].equals(instance().dictionariesEncoding))
+                instance().dictionariesEncodingComboBox.setSelectedIndex(i);
         instance().form.show();
     }
 
@@ -160,12 +179,20 @@ public class Settings extends BaseDialog {
             instance().isNewLineAfterVerse = instance().newLineAfterVerseCheck.isSelected();
             instance().isStrongsEnabled = instance().strongsEnabledCheck.isSelected();
             instance().modulesPath = instance().modulesPathField.getText();
-            instance().currentLocaleName = (String) instance().availableLocales.elementAt(instance().localesComboBox.getSelectedIndex());
+            String newLocaleName = (String) instance().availableLocales.elementAt(instance().localesComboBox.getSelectedIndex());
+            if (!instance().currentLocaleName.equals(newLocaleName)) {
+                Util.show("needRestartForSettingsEffect");
+                instance().currentLocaleName = newLocaleName;
+            }
+            instance().dictionariesEncoding = Encodings.ENCODINGS[instance().dictionariesEncodingComboBox.getSelectedIndex()];
+            //if change dictionaries encoding it is necessary to reload all dictionaries indexes with new encoding
+            Modules.reloadDictionaries();
             //save settings
             Platform.addSettingsKey("Settings", "modulesPath", instance().modulesPath);
             writeBooleanToSettings("isNewLineAfterVerse", isNewLineAfterVerse);
             writeBooleanToSettings("isStrongsEnabled", isStrongsEnabled);
-            Platform.addSettingsKey("Settings", "currentLocale", instance().currentLocaleName);
+            Platform.addSettingsKey("Settings", "currentLocale", newLocaleName);
+            Platform.addSettingsKey("Settings", "dictionariesEncoding", instance().dictionariesEncoding);
             //close form
             TextView.show(instance().currentReference);
         }
@@ -188,6 +215,10 @@ public class Settings extends BaseDialog {
 
     static boolean isStrongsEnabled() {
         return instance().isStrongsEnabled;
+    }
+    
+    static String getDictionariesEncoding() {
+        return instance().dictionariesEncoding;
     }
 
     static String getModulesPath() {

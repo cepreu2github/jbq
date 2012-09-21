@@ -195,7 +195,7 @@ public class Util {
     }
 
 	public static void show(String message) {
-		Dialog.show("Info", message, "OK", null);
+		Dialog.show("info", message, "OK", null);
 	}
 	
     public static Util instance() {

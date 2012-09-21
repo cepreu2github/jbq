@@ -53,6 +53,8 @@ public class jBQ extends MIDlet {
         }
         //load translation
         UIManager.getInstance().setResourceBundle(Settings.getCurrentLocale());
+		//show splash
+		LoadingScreen.show(Settings.tr("programStartup"));
         //get last history entry
         Reference r = null;
         if (History.size() != 0)
@@ -63,9 +65,7 @@ public class jBQ extends MIDlet {
             String firstModuleName = null;
             try {
                 firstModuleName = (String) Modules.names(Module.Types.BIBLE).firstElement();
-            } catch (Throwable exception) {
-				Util.showException(exception);
-            }
+            } catch (Throwable exception) {}
             if (firstModuleName != null) {
                 Module firstModule = Modules.getByName(firstModuleName);
                 r = new Reference(firstModuleName, ((TextModule) firstModule).firstElementName(), 1, 1);

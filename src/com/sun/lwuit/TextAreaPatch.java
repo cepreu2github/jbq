@@ -21,6 +21,9 @@
  
 package com.sun.lwuit;
 
+// class, needed to workaround bug in TextArea of LWUIT 1.5:
+// when user tap at TextArea with virtual keyboard disabled, native platform input field does not appear
+
 public class TextAreaPatch extends TextArea {
 
     public TextAreaPatch() {

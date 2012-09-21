@@ -31,6 +31,7 @@ import com.sun.lwuit.ComboBox;
 import com.sun.lwuit.list.ListModel;
 import java.util.Vector;
 
+//interface to specify search and initiate it
 public class Search extends BaseDialog {
 
     private Command cancelCommand;
@@ -74,6 +75,7 @@ public class Search extends BaseDialog {
         clearComboBox(instance().fromComboBox);
         clearComboBox(instance().toComboBox);
         Vector bookNames = module.bookNames();
+        //we provide possibility to choose from which book of module user wants to find to which book
         for(int i = 0; i < bookNames.size(); i++) {
             instance().fromComboBox.addItem(bookNames.elementAt(i));
             instance().toComboBox.addItem(bookNames.elementAt(i));
@@ -85,12 +87,18 @@ public class Search extends BaseDialog {
         if (event.getCommand() == cancelCommand)
             TextView.show();
         if (event.getCommand() == searchCommand) {
-            boolean isCaseSensitive = isCaseSensitiveCheckbox.isSelected();
-            String keywordsString = keywordsField.getText().trim();
+            final boolean isCaseSensitive = isCaseSensitiveCheckbox.isSelected();
+            final String keywordsString = keywordsField.getText().trim();
             if (keywordsString.length() < 3)
                 Dialog.show("error", "searchTextTooSmall", "ok", null);
-            else
-                TextView.showSearchResults(keywordsString, isCaseSensitive, fromComboBox.getSelectedIndex(), toComboBox.getSelectedIndex());
+            else {
+                LoadingScreen.show(Settings.tr("searching"));
+                new Thread() {
+                    public void run() {
+                        TextView.showSearchResults(keywordsString, isCaseSensitive, fromComboBox.getSelectedIndex(), toComboBox.getSelectedIndex());
+                    }
+                }.start();
+            }
         }
     }
 

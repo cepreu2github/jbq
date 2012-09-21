@@ -109,7 +109,11 @@ public class Modules {
         //locate modules at phone memory and memory card via JSR-75
         FileSystemStorage FSSI = FileSystemStorage.getInstance();
         String[] Roots;
-        Roots = FSSI.getRoots();
+        try {
+            Roots = FSSI.getRoots();
+        } catch (Throwable ex) {
+            Roots = new String[0];
+        }
         //list of possible modules locations
         Vector locations = new Vector();
         Vector dictionariesLocations = new Vector();
@@ -149,6 +153,15 @@ public class Modules {
                         modules.addElement(new DictionaryModule(filesList[j]));
                 }
         }
+    }
+
+    //used to reload all dictionary modules by Settings module in case of dictionary default encoding changes
+    public static void reloadDictionaries() {
+        for (int i = 0; i < instance().modules.size(); i++) {
+            Module module = (Module) instance().modules.elementAt(i);
+            if (module.getType() == Module.Types.DICTIONARY)
+                ((DictionaryModule) module).reload();
+        }        
     }
 
     private static Modules instance() {

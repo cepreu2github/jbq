@@ -23,14 +23,15 @@ package org.jBQ;
 
 import com.sun.lwuit.Command;
 import com.sun.lwuit.events.ActionEvent;
-import com.sun.lwuit.TextArea;
+import com.sun.lwuit.TextAreaPatch;
 import com.sun.lwuit.Button;
 import java.util.Vector;
 
+// class for work with dictionary. Provides possibility to choose dictionary article by typing word or words prefix
 public class DictionaryView extends BaseDialog {
 
     private Command cancelCommand;
-    private TextArea wordField;
+    private TextAreaPatch wordField;
     private DictionaryModule currentDictionary;
 
     public DictionaryView() {
@@ -39,7 +40,7 @@ public class DictionaryView extends BaseDialog {
         //add commands
         cancelCommand = super.createCommand("cancel");
         form.addCommandListener(this);
-        wordField = new TextArea();
+        wordField = new TextAreaPatch();
         wordField.addActionListener(this);
     }
 

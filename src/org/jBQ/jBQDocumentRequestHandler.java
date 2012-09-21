@@ -30,6 +30,8 @@ public class jBQDocumentRequestHandler extends DefaultDocumentRequestHandler {
 
     private static Reference referenceToOpen;
 
+    //because there is no possibility to put any custom data through resourceRequestedAsync (such interface it implements)
+    //this function called just before TextView request some texts with resourceRequestedAsync
     public static void setReference(Reference reference) {
         referenceToOpen = reference;
     }
