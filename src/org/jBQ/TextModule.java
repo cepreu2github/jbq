@@ -133,7 +133,7 @@ public class TextModule extends Module {
             Util.showException(exception);
         }
         //read chapter
-        char[] chapterText = new char[book.chapterOffsets[chapterNumber + 1] - book.chapterOffsets[chapterNumber] - chapterSign.length()];
+        char[] chapterText = new char[book.chapterOffsets[chapterNumber + 1] - book.chapterOffsets[chapterNumber]];
         try {
             bookStreamEncoded.read(chapterText);
         } catch (Throwable exception) {
@@ -170,7 +170,7 @@ public class TextModule extends Module {
                 if (currentChapter >= book.chapterQuantity)
                     break;
                 //add chapter to chapterOffsets
-                book.chapterOffsets[currentChapter] = filePosition + chapterSignPositon + 1;
+                book.chapterOffsets[currentChapter] = filePosition + chapterSignPositon + 1 - chapterSign.length();
                 currentChapter++;
                 chapterSignPositon = blockOfText.indexOf(chapterSign, chapterSignPositon + chapterSign.length());
             }
@@ -218,7 +218,7 @@ public class TextModule extends Module {
         chapterText = makeSpecialFormatting(chapterText, testament);
         //determine possibility to go at next chapter
         if (chaptersCountInBook(reference.getEntry()) + (getFirstChapterNumber() - 1) > reference.getChapter())
-            chapterText += "<BR> <P ALIGN=\"center\"> <B> ________ ________ ________ </B> </P> <A HREF=\"jBQ:///" + name + "/" + reference.getEntry() + "/" + Integer.toString(reference.getChapter() + 1) + TextModule.anchorPrefix + "1\">" + Settings.tr("toNextChapter") + " </A>"; 
+            chapterText += "<P ALIGN=\"center\"> <B> ________ ________ ________ </B> </P> <A HREF=\"jBQ:///" + name + "/" + reference.getEntry() + "/" + Integer.toString(reference.getChapter() + 1) + TextModule.anchorPrefix + "1\">" + Settings.tr("toNextChapter") + " </A>"; 
         return chapterText;
     }
 
@@ -446,7 +446,7 @@ public class TextModule extends Module {
                     isVerseNumberNotParsed = false;
                     try {
                         Integer.parseInt(parts[j]);
-                        verses[i] += " <BIG> <A NAME=\"" + anchorPrefix.substring(1) + parts[j].trim() + "\" HREF=\"" + anchorPrefix + parts[j] + "\"> " + parts[j] + " </A> </BIG>";
+                        verses[i] += "<A NAME=\"" + anchorPrefix.substring(1) + parts[j].trim() + "\" HREF=\"" + anchorPrefix + parts[j] + "\"> [" + parts[j] + "] </A>";
                     } catch (Throwable exception) {
                         verses[i] += parts[j];
                     }
