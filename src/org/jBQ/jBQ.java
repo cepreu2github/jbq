@@ -38,14 +38,13 @@ public class jBQ extends MIDlet {
 
     public void startApp() {
         Display.getInstance().setDefaultVirtualKeyboard(null);
-        Display.init(this);
         //load theme
         try {
             //set the theme
             if (Display.getInstance().hasNativeTheme())
                 Display.getInstance().installNativeTheme();
             else {
-                Resources theme = Resources.open("/TipsterTheme.res");
+                Resources theme = Resources.open("/androidTheme.res");
                 UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
             }
         } catch (Throwable exception) {

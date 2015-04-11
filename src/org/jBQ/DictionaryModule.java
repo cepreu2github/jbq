@@ -56,13 +56,12 @@ public class DictionaryModule extends Module {
         dictionary = null;
         encoding = Settings.getDictionariesEncoding();
         //open stream for .idx file
-        InputStream idxStream = null;
         try {
-            idxStream = Util.getResourceAsStream(pathToIDX);
+        	InputStream idxStream = Util.getResourceAsStream(pathToIDX);
+        	idxStreamEncoded = new AlbiteStreamReader(idxStream, encoding);
         } catch (Throwable exception) {
             Util.showException(exception);
         }
-        idxStreamEncoded = new AlbiteStreamReader(idxStream, encoding);
         //read name from idx
         fullName = Util.readLine(idxStreamEncoded);
     }
@@ -135,13 +134,13 @@ public class DictionaryModule extends Module {
 
     private String textByRecord(Record record) {
         //open stream for file with articles text
-        InputStream articleStream = null;
+    	AlbiteStreamReader articleStreamEncoded = null;
         try {
-            articleStream = Util.getResourceAsStream(articleFileName);
+        	InputStream articleStream = Util.getResourceAsStream(articleFileName);
+        	articleStreamEncoded = new AlbiteStreamReader(articleStream, encoding);
         } catch (Throwable exception) {
             Util.showException(exception);
         }
-        AlbiteStreamReader articleStreamEncoded = new AlbiteStreamReader(articleStream, encoding);
         //locate article
         try {
             articleStreamEncoded.skip(record.beginOffset);

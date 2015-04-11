@@ -22,79 +22,28 @@
 //class for J2ME platform to access specific functions of this platform
 package org.jBQ;
 
-import javax.microedition.lcdui.Canvas;
-import java.io.*;
-import javax.microedition.rms.*;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import java.util.Locale;
 
 public class Platform {
 
-    public static final int keyPageDownCode = Canvas.KEY_NUM8;
-    public static final int keyPageUpCode = Canvas.KEY_NUM2;
-
+	public static SharedPreferences sharedPreferences;
+	public static final char FSSEP = '/';
+	
     //get system locale name
     public static String getSystemLocale() {
-        return Util.splitString(System.getProperty("microedition.locale"), "-", 2)[0];
+    	return Locale.getDefault().getLanguage();
     }
 
     //get some record from RMS by his String key
-    public static String getSettingsKey(String section, String key) {
-        try {
-            RecordStore store = RecordStore.openRecordStore(section, true);
-            //find record and get data
-            int recordId = rmsIdByKey(store, key);
-            if (recordId != -1) {
-                byte[] record = store.getRecord(recordId);
-                //unpack data
-                ByteArrayInputStream bais = new ByteArrayInputStream(record);
-                DataInputStream dis = new DataInputStream(bais);
-                String possibleKey = dis.readUTF();
-                return dis.readUTF();
-            }
-            store.closeRecordStore();
-        } catch (Throwable exception) {
-            Util.showException(exception);
-        }
-        return null;
-    }
-
-    //get record id by String key
-    private static int rmsIdByKey(RecordStore store, String key) {
-        try {
-            for (RecordEnumeration re = store.enumerateRecords(null, null, false); re.hasNextElement();) {
-                int returnId = re.nextRecordId();
-                byte[] record = store.getRecord(returnId);
-                //unpack data
-                ByteArrayInputStream bais = new ByteArrayInputStream(record);
-                DataInputStream dis = new DataInputStream(bais);
-                String possibleKey = dis.readUTF();
-                if (possibleKey.equals(key))
-                    return returnId;
-            }
-        } catch (Throwable exception) {
-            Util.showException(exception);
-        }
-        return -1;
+    public static String getSettingsKey(String key) {
+    	return sharedPreferences.getString(key, null);
     }
 
     //add some record to RMS with String key
-    public static void addSettingsKey(String section, String key, String data) {
-        try {
-            RecordStore store = RecordStore.openRecordStore(section, true);
-            //pack data
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream dos = new DataOutputStream(baos);
-            dos.writeUTF(key);
-            dos.writeUTF(data);
-            byte[] record = baos.toByteArray();
-            //write new or update old record
-            int oldRecordId = rmsIdByKey(store, key);
-            if (oldRecordId != -1)
-                store.setRecord(oldRecordId, record, 0, record.length);
-            else
-                store.addRecord(record, 0, record.length);
-            store.closeRecordStore();
-        } catch (Throwable exception) {
-            Util.showException(exception);
-        }
+    public static void addSettingsKey(String key, String data) {
+    	Editor editor = sharedPreferences.edit().putString(key, data);
+    	editor.commit();
     }
 }

@@ -32,12 +32,12 @@ import java13.lang.Character;
 //class with useful functions, which can be used everywhere from program, but not so big to have special class with this function
 public class Util {
 
-    private static final char FSSEP = FileSystemStorage.getInstance().getFileSystemSeparator();
+    public static final char FSSEP = Platform.FSSEP;
 
     //try to find correct case for FileName in case sensitive filesystem, by comparing FileName in lower case with list of files in directory
     //in low case
     public static String GetFileNameInProperCase(String InFileName) {
-        if (InFileName.startsWith("jar://"))
+    	if (InFileName.startsWith("jar://"))
             return InFileName.toLowerCase();
         else {
 			try {
@@ -73,20 +73,25 @@ public class Util {
                 Dialog.show("error", "Can't open file " + filePath + ". Maybe it is problem with case of file name, because opening in .jar is case sensitive.", "ok", null);
             return returnValue;
             //its for JSR-75
-        } else if (filePath.startsWith("file://"))
+        } else
             try {
                 return FileSystemStorage.getInstance().openInputStream(filePath);
             } catch (Throwable exception) {
                 throw exception;
             }
-        else
-            throw new IncorrectFilePathException("Incorrect protocol specified");
+        //else
+        //    throw new IncorrectFilePathException("Incorrect protocol specified");
     }
 
     //read one line from input stream
     public static String readLine(AlbiteStreamReader reader) {
         //test whether the end of file has been reached. If so, return null.
-        int readChar = reader.read();
+        int readChar = -1;
+        try {
+        	readChar = reader.read();
+        } catch (Throwable exception) {
+            Util.showException(exception);
+        }
         if (readChar == -1)
             return null;
         StringBuffer string = new StringBuffer("");
@@ -100,7 +105,11 @@ public class Util {
             if (readChar != '\r')
                 string.append((char) readChar);
             //read the next character
-            readChar = reader.read();
+            try {
+            	readChar = reader.read();
+            } catch (Throwable exception) {
+                Util.showException(exception);
+            }
         }
         return string.toString();
     }
@@ -169,7 +178,12 @@ public class Util {
     }
 
     public static String streamToString(InputStream inputStream) {
-        AlbiteStreamReader stream = new AlbiteStreamReader(inputStream, "utf-8");
+        AlbiteStreamReader stream = null;
+        try {
+        	stream = new AlbiteStreamReader(inputStream, "utf-8");
+        } catch (Throwable exception) {
+            Util.showException(exception);
+        }
         StringBuffer strBuf = new StringBuffer();
         try {
             int value = stream.read();

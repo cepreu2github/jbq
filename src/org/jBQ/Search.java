@@ -23,6 +23,7 @@ package org.jBQ;
 
 import com.sun.lwuit.Command;
 import com.sun.lwuit.events.ActionEvent;
+import com.sun.lwuit.Button;
 import com.sun.lwuit.Label;
 import com.sun.lwuit.TextAreaPatch;
 import com.sun.lwuit.Dialog;
@@ -59,8 +60,10 @@ public class Search extends BaseDialog {
         toLabel = createLabel("to");
         toComboBox = createComboBox();
         //commands
-        cancelCommand = super.createCommand("cancel");
-        searchCommand = super.createCommand("search");
+        cancelCommand = super.createCommand("cancel", backIconPath);
+        form.setBackCommand(cancelCommand);
+        searchCommand = super.createCommand("search", searchIconPath);
+        form.addComponent(new Button(searchCommand));
     }
 
     private static void clearComboBox(ComboBox box) {

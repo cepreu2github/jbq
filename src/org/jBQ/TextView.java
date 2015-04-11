@@ -25,7 +25,8 @@ import com.sun.lwuit.html.HTMLComponent;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.Display;
-import com.sun.lwuit.Dialog;
+import com.sun.lwuit.Button;
+import com.sun.lwuit.layouts.BorderLayout;
 
 //main class to view text and access to any other program functions
 public class TextView extends BaseDialog {
@@ -40,6 +41,7 @@ public class TextView extends BaseDialog {
     private Command settingsCommand;
     private Command searchCommand;
     private Command backCommand;
+    private Command titleGotoCommand;
     private Reference currentReference = null;
 
     private TextView() {
@@ -50,18 +52,20 @@ public class TextView extends BaseDialog {
         HTMLView.setHTMLCallback(new jBQHTMLCallback());
         form.addComponent(HTMLView);
         //add commands
-        backCommand = super.createCommand("back");
-        gotoCommand = super.createCommand("goto");
-        exitCommand = super.createCommand("exit");
-        helpCommand = super.createCommand("help");
-        moduleCommand = super.createCommand("module");
-        historyCommand = super.createCommand("history");
-        aboutCommand = super.createCommand("about");
-        settingsCommand = super.createCommand("settings");
-        searchCommand = super.createCommand("search");
+        backCommand = super.createCommand("back", backIconPath);
+        gotoCommand = super.createCommand("goto", "/icons/media-playback-start.png");
+        exitCommand = super.createCommand("exit", "/icons/application-exit.png");
+        helpCommand = super.createCommand("help", "/icons/dialog-question.png");
+        moduleCommand = super.createCommand("module", saveIconPath);
+        historyCommand = super.createCommand("history", "/icons/format-justify-fill.png");
+        aboutCommand = super.createCommand("about", "/icons/help-about.png");
+        settingsCommand = super.createCommand("settings", "/icons/gtk-preferences.png");
+        searchCommand = super.createCommand("search", searchIconPath);
+        form.setBackCommand(backCommand);
+        titleGotoCommand = new Command("goto");
+        //form.getTitleArea().addComponent(0, BorderLayout.EAST, new Button(titleGotoCommand));
+        form.setTitleComponent(new Button(titleGotoCommand));
         form.addCommandListener(this);
-        form.addKeyListener(Platform.keyPageDownCode, this);
-        form.addKeyListener(Platform.keyPageUpCode, this);
     }
 
     //show text by given Reference
@@ -130,14 +134,10 @@ public class TextView extends BaseDialog {
     }
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getKeyEvent() == Platform.keyPageDownCode)
-            HTMLView.scrollPages(1, true);
-        else if (event.getKeyEvent() == Platform.keyPageUpCode)
-            HTMLView.scrollPages(-1, true);
-        else if (event.getCommand() == backCommand) {
+    	if (event.getCommand() == backCommand) {
             if (History.size() >= 2)
                 show(History.elementAt(History.size() - 2));
-        } else if (event.getCommand() == gotoCommand) {
+        } else if (event.getCommand() == gotoCommand || event.getCommand() == titleGotoCommand) {
             Module currentModule = Modules.getByName(currentReference.getModule());
             if (currentModule.getType() != Module.Types.DICTIONARY)
                 TextSelect.show(currentReference);

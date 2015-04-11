@@ -38,7 +38,8 @@ public class DictionaryView extends BaseDialog {
         //create form
         super("dictionary");
         //add commands
-        cancelCommand = super.createCommand("cancel");
+        cancelCommand = super.createCommand("cancel", backIconPath);
+        form.setBackCommand(cancelCommand);
         form.addCommandListener(this);
         wordField = new TextAreaPatch();
         wordField.addActionListener(this);

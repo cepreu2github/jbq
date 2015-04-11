@@ -47,7 +47,8 @@ public class ModuleChoose extends BaseDialog {
         addButtonGroup(Module.Types.DICTIONARY, "dictionaries");
         form.addComponent(tabPanel);
         //add commands
-        cancelCommand = super.createCommand("cancel");
+        cancelCommand = super.createCommand("cancel", backIconPath);
+        form.setBackCommand(cancelCommand);
         form.addCommandListener(this);
     }
 

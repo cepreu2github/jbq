@@ -62,7 +62,7 @@ public class Settings extends BaseDialog {
         super("Settings");
         form.addCommandListener(this);
         //try to read current locale from settings or determine it automatically
-        currentLocaleName = Platform.getSettingsKey("Settings", "currentLocale");
+        currentLocaleName = Platform.getSettingsKey("currentLocale");
         getAvailableLocales();
         if (currentLocaleName == null) {
             //determine locale
@@ -78,10 +78,10 @@ public class Settings extends BaseDialog {
         }
         currentLocale = languagesResource.getL10N("Lang", currentLocaleName);
         //get settings from RMS or INI
-        modulesPath = Platform.getSettingsKey("Settings", "modulesPath");
+        modulesPath = Platform.getSettingsKey("modulesPath");
         if (modulesPath == null)
-            modulesPath = "bqmodules";
-        dictionariesEncoding = Platform.getSettingsKey("Settings", "dictionariesEncoding");
+            modulesPath = "/sdcard/BibleQuote";
+        dictionariesEncoding = Platform.getSettingsKey("dictionariesEncoding");
         if (dictionariesEncoding == null)
             dictionariesEncoding = "windows-1251";
         isNewLineAfterVerse = getBooleanFromSettings("isNewLineAfterVerse");
@@ -111,8 +111,9 @@ public class Settings extends BaseDialog {
                 localesComboBox.setSelectedIndex(i);
         }
         //add commands
-        cancelCommand = super.createCommand("cancel");
-        saveCommand = super.createCommand("save");
+        cancelCommand = super.createCommand("cancel", backIconPath);
+        saveCommand = super.createCommand("save", saveIconPath);
+        form.setBackCommand(saveCommand);
         isControlsCreated = true;
     }
 
@@ -146,7 +147,7 @@ public class Settings extends BaseDialog {
     }
 
     private boolean getBooleanFromSettings(String name) {
-        String resultString = Platform.getSettingsKey("Settings", name);
+        String resultString = Platform.getSettingsKey(name);
         if (resultString == null || resultString.equals("true"))
             return true;
         return false;
@@ -188,11 +189,11 @@ public class Settings extends BaseDialog {
             //if change dictionaries encoding it is necessary to reload all dictionaries indexes with new encoding
             Modules.reloadDictionaries();
             //save settings
-            Platform.addSettingsKey("Settings", "modulesPath", instance().modulesPath);
+            Platform.addSettingsKey("modulesPath", instance().modulesPath);
             writeBooleanToSettings("isNewLineAfterVerse", isNewLineAfterVerse);
             writeBooleanToSettings("isStrongsEnabled", isStrongsEnabled);
-            Platform.addSettingsKey("Settings", "currentLocale", newLocaleName);
-            Platform.addSettingsKey("Settings", "dictionariesEncoding", instance().dictionariesEncoding);
+            Platform.addSettingsKey("currentLocale", newLocaleName);
+            Platform.addSettingsKey("dictionariesEncoding", instance().dictionariesEncoding);
             //close form
             TextView.show(instance().currentReference);
         }
@@ -200,9 +201,9 @@ public class Settings extends BaseDialog {
 
     private void writeBooleanToSettings(String name, boolean value) {
         if (value)
-            Platform.addSettingsKey("Settings", name, "true");
+            Platform.addSettingsKey(name, "true");
         else
-            Platform.addSettingsKey("Settings", name, "false");
+            Platform.addSettingsKey(name, "false");
     }
 
     //used for "Verse starts from new line" option

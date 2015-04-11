@@ -39,7 +39,7 @@ public class History extends BaseDialog {
         history = new Vector();
         //reading history from RMS or INI
         for (int i = 0; i < maxSize; i++) {
-            String url = Platform.getSettingsKey("History", "Record" + Integer.toString(i));
+            String url = Platform.getSettingsKey("Record" + Integer.toString(i));
             if (url != null) {
                 Reference reference = new Reference(url);
                 if (Modules.getByName(reference.getModule()) != null)
@@ -48,14 +48,15 @@ public class History extends BaseDialog {
         }
         //add commands
         goCommands = new Command[maxSize];
-        cancelCommand = super.createCommand("cancel");
+        cancelCommand = super.createCommand("cancel", backIconPath);
+        form.setBackCommand(cancelCommand);
         form.addCommandListener(this);
     }
 
     //save history to persistent storage (RMS for example)
     public static void save() {
         for (int i = 0; i < instance().history.size(); i++)
-            Platform.addSettingsKey("History", "Record" + Integer.toString(i), ((Reference) instance().history.elementAt(i)).toString());
+            Platform.addSettingsKey("Record" + Integer.toString(i), ((Reference) instance().history.elementAt(i)).toString());
     }
 
     public static void addElement(Reference element) {

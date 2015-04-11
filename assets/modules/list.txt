@@ -1,0 +1,7 @@
+commentaries/ngsb/bibleqt.ini
+commentaries/tsk/bibleqt.ini
+dictionaries/vikhlyantsev.idx
+dictionaries/zondervan.idx
+rststrong/bibleqt.ini
+strongs/greek.idx
+strongs/hebrew.idx

@@ -28,21 +28,30 @@ import com.sun.lwuit.Command;
 import com.sun.lwuit.CheckBox;
 import com.sun.lwuit.ComboBox;
 import com.sun.lwuit.Label;
+import com.sun.lwuit.Image;
 import com.sun.lwuit.layouts.*;
 
 //class for providing base Dialog services to keep similar code in one place
 public abstract class BaseDialog implements ActionListener {
 
     protected Form form;
-
+    protected static String backIconPath = "/icons/edit-undo.png";
+    protected static String saveIconPath = "/icons/document-save.png";
+    protected static String searchIconPath = "/icons/system-search.png";
+    
     public BaseDialog(String title) {
         form = new Form(title);
         form.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
     }
 
     //below some methods to quickly create standard GUI components and place them at form
-    protected Command createCommand(String name) {
-        Command command = new Command(name);
+    protected Command createCommand(String name, String iconPath) {
+        Command command = null;
+        try{
+        	command = new Command(name, Image.createImage(iconPath));
+        } catch (Throwable exception) {
+            Util.showException(exception);
+        }
         form.addCommand(command);
         return command;
     }

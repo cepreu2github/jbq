@@ -39,7 +39,7 @@ public abstract class Module {
     protected String shortName;
     protected String fullName;
     protected int type = Types.BOOK;
-    protected static final char FSSEP = FileSystemStorage.getInstance().getFileSystemSeparator();
+    protected static final char FSSEP = Util.FSSEP;
 
     public String getShortName() {
         return shortName;

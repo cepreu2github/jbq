@@ -28,7 +28,7 @@ import org.albite.io.decoders.AlbiteStreamReader;
 //Vector of module, but with some service functions
 public class Modules {
 
-    private static final char FSSEP = FileSystemStorage.getInstance().getFileSystemSeparator();
+    private static final char FSSEP = Util.FSSEP;
     private final String MidletModulesPath = "modules/";
     private final String MidletModulesList = "modules/list.txt";
     private final String LocalStorageModulesPath = Settings.getModulesPath();
@@ -134,8 +134,8 @@ public class Modules {
             if (directoryList != null)
                 for (int j = 0; j < directoryList.length; j++) {
                     directoryList[j] = (String) locations.elementAt(i) + FSSEP + directoryList[j];
-                    if (FSSI.isDirectory(directoryList[j]) && FSSI.exists(Util.GetFileNameInProperCase(directoryList[j] + "BIBLEQT.INI")))
-                        modules.addElement(new TextModule(Util.GetFileNameInProperCase(directoryList[j] + "BIBLEQT.INI")));
+                    if (FSSI.isDirectory(directoryList[j]) && FSSI.exists(Util.GetFileNameInProperCase(directoryList[j] + FSSEP + "BIBLEQT.INI")))
+                        modules.addElement(new TextModule(Util.GetFileNameInProperCase(directoryList[j] + FSSEP + "BIBLEQT.INI")));
                 }
         }
         //find all dictionaries

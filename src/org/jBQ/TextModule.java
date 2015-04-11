@@ -35,7 +35,7 @@ public class TextModule extends Module {
     private boolean hasStrongs = false;
     private Vector books;
     private final String[] hebrewBooks = {"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "Samuel", "2Samuel", "Kings", "2Kings", "Chron", "2Chron", "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs", "Ecclesia", "Song", "Isaiah", "Jeremiah", "Lament", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"};
-    private final String[] greekBooks = {"Matthew", "Mark", "Luke", "John", "Acts", "James", "1Peter", "2Peter", "1John", "2John", "3John", "Jude", "Romans", "1Corinthians", "2Corinthians", "Galatians", "Ephesian", "Philippians", "Colossians", "1Thessalonians", "2Thessalonians", "1Timothy", "2Timothy", "Titus", "Philemon", "Hebrews", "Revelation"};
+    private final String[] greekBooks = {"Matthew", "Mark", "Luke", "John", "Acts", "James", "1Peter", "2Peter", "1John", "2John", "3John", "Jude", "Romans", "1Corinthians", "2Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1Thessalonians", "2Thessalonians", "1Timothy", "2Timothy", "Titus", "Philemon", "Hebrews", "Revelation"};
     private final String hebrewStrongsDictionary = "hebrew";
     private final String greekStrongsDictionary = "greek";
     private final int bufferSize = 350000;
@@ -108,13 +108,14 @@ public class TextModule extends Module {
     }
 
     private AlbiteStreamReader openBookFile(Book book) {
-        InputStream bookStream = null;
+        AlbiteStreamReader resultStream = null;
         try {
-            bookStream = Util.getResourceAsStream(Util.GetFileNameInProperCase(book.file));
+        	InputStream bookStream = Util.getResourceAsStream(Util.GetFileNameInProperCase(book.file));
+        	resultStream = new AlbiteStreamReader(bookStream, encoding);
         } catch (Throwable exception) {
             Util.showException(exception);
         }
-        return new AlbiteStreamReader(bookStream, encoding);
+        return resultStream;
     }
 
     // read one chapter from file and return it as text
@@ -261,7 +262,11 @@ public class TextModule extends Module {
             int verseNumber = -1;
             //read file until the end
             while(wasReaded > 0) {
-                wasReaded = bookStreamEncoded.read(text, wasRemains, bufferSize - wasRemains);
+            	try {
+            		wasReaded = bookStreamEncoded.read(text, wasRemains, bufferSize - wasRemains);
+            	} catch (Throwable exception) {
+                    Util.showException(exception);
+                }
                 //System.out.println(wasReaded);
                 //System.out.println(wasRemains + wasReaded);
                 int actualBufferSize = wasRemains + wasReaded;
@@ -496,7 +501,12 @@ public class TextModule extends Module {
             Util.showException(exception);
         }
         //read settings from INI
-        AlbiteStreamReader INIStreamEncoded = new AlbiteStreamReader(INIStream, encoding);
+        AlbiteStreamReader INIStreamEncoded = null;
+        try{
+        	INIStreamEncoded = new AlbiteStreamReader(INIStream, encoding);
+        } catch (Throwable exception) {
+            Util.showException(exception);
+        }
         //parse general settings
         String line = Util.readLine(INIStreamEncoded);
         while (line != null) {
